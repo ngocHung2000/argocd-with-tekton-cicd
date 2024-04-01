@@ -1,0 +1,59 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: cicd-example-nodejs-app-
+spec:
+  pipelineRef:
+    name: cicd-example-nodejs-app
+  podTemplate:
+    securityContext:
+      fsGroup: 65532
+  workspaces: 
+  - name: shared-data
+    persistentVolumeClaim:
+      claimName: pvc-application
+  - name: git-credentials
+    secret:
+      secretName: git-credentials
+  params:
+  - name: repo-url
+    value: "git@github.com:ngocHung2000/cicd-example-nodejs.git"
+  - name: REGISTRY_CREDENTIALS
+    value: "registry-credentials"
+  - name: TARGET_REGISTRY
+    value: "20.210.108.157:8082"
+  - name: IMAGE_NAME 
+    value: "nodejs-app"
+  - name: IMAGE_VERSION
+    value: "v1"
+  - name: repo-url-deployment
+    value: "git@github.com:ngocHung2000/nodejs-argocd-deployment-example.git"
+  - name: IMAGE_NAME_DEPLOYMENT 
+    value: "ngochung1809/nodejs-app"
+  - name: GIT_USER_NAME
+    value: "hungtn29"
+  - name: GIT_USER_EMAIL
+    value: "tongochung1809@gmail.com"
+  - name: GIT_SCRIPT
+    value: |
+      # Push code to git
+      git add .
+      git commit -m "update"
+      ls -lah 
+      git branch
+      git remote set-url origin git@github.com:ngocHung2000/nodejs-argocd-deployment-example.git
+      git push origin HEAD:master
+  - name: ARGS
+    value: |
+      fs . > trivyfs.txt
+      cat trivyfs.txts
+  - name: SONAR_HOST_URL
+    value: "74.226.219.73:9000"
+  - name: SONAR_PROJECT_KEY
+    value: "example-cicd"
+  - name: PROJECT_VERSION
+    value: "v1"
+  - name: SONAR_LOGIN_KEY
+    value: "for-tekton"
+  - name: SONAR_PASSWORD_KEY
+    value: "TOKEN_PASSWD"

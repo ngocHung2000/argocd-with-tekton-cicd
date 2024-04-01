@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: show-repo-deployment
+spec:
+  description: Read and display README file.
+  workspaces:
+  - name: source
+  params:
+    - name: IMAGE_NAME_DEPLOYMENT
+    - name: IMAGE_VERSION
+  steps:
+  - name: read
+    image: alpine:latest
+    script: | 
+      #!/usr/bin/env sh
+      ls -lah $(workspaces.source.path)
+      cat $(workspaces.source.path)/deployment.yaml
+      echo "============================================================="
+      sed -i 's/$(params.IMAGE_NAME_DEPLOYMENT).*/$(params.IMAGE_NAME_DEPLOYMENT):$(params.IMAGE_VERSION)/g' $(workspaces.source.path)/deployment.yaml
+      cat $(workspaces.source.path)/deployment.yaml

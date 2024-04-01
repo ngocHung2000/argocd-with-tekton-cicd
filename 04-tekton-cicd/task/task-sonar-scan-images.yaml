@@ -1,0 +1,35 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sonarqube-scanner
+  labels:
+    app.kubernetes.io/version: "0.4"
+  annotations:
+    tekton.dev/deprecated: "true"
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/categories: Security
+    tekton.dev/tags: security
+    tekton.dev/displayName: "sonarqube scanner"
+    tekton.dev/platforms: "linux/amd64"
+spec:
+  workspaces:
+    - name: source
+      description: "Workspace containing the code which needs to be scanned by SonarQube"
+    - name: sonar-credentials
+      description: |
+        A workspace containing a login or password for use within sonarqube.
+      optional: true
+  params:
+    - name: SONAR_SCANNER_IMAGE
+      description: "The sonarqube scanner CLI image which will run the scan"
+      default: "docker.io/sonarsource/sonar-scanner-cli:4.6@sha256:7a976330a8bad1beca6584c1c118e946e7a25fdc5b664d5c0a869a6577d81b4f"
+  steps:
+    - name: sonar-scan
+      image: $(params.SONAR_SCANNER_IMAGE)
+      workingDir: $(workspaces.source.path)
+      script: |
+        sonar-scanner \
+        -Dsonar.projectKey=example-cicd \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=http://74.226.219.73:9000 \
+        -Dsonar.login=sqp_5c95208c24e959222f827f5df8bc394145727836

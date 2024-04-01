@@ -1,0 +1,83 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-nodejs-app
+  labels:
+    app.kubernetes.io/version: "0.6"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.17.0"
+    tekton.dev/categories: Image Build
+    tekton.dev/tags: image-build
+    tekton.dev/displayName: "Build and upload container image using Kaniko"
+    tekton.dev/platforms: "linux/amd64,linux/arm64,linux/ppc64le"
+spec:
+  description: >-
+    This Task builds a simple Dockerfile with kaniko and pushes to a registry.
+    This Task stores the image name and digest as results, allowing Tekton Chains to pick up
+    that an image was built & sign it.
+  params:
+    - name: REGISTRY_CREDENTIALS
+      description: Registry Credentials
+      type: string
+    - name: BUILDER_IMAGE
+      description: The image on which builds will run
+      default: quay.io/buildah/stable
+      type: string
+    - name: PUSH_REGISTRY_IMAGE
+      description: The image on which push images to registry
+      default: quay.io/buildah/stable
+      type: string
+    - name: TARGET_REGISTRY
+      description: The target registry will push
+      default: "20.210.108.157:8082"
+      type: string
+    - name: IMAGE_NAME 
+      description: Image name
+      default: "nodejs-app"
+      type: string
+    - name: IMAGE_VERSION
+      description: Image version
+      default: "latest"
+      type: string
+  workspaces:
+    - name: source
+      description: Holds the context and Dockerfile
+  steps:
+    - name: build-image
+      image: $(params.BUILDER_IMAGE)
+      workingDir: "$(workspaces.source.path)"
+      command: ['buildah', 'bud', '--tls-verify=false', '--layers', '-f', 'Dockerfile', '-t', '$(params.TARGET_REGISTRY)/$(params.IMAGE_NAME):$(params.IMAGE_VERSION)', '.']
+      volumeMounts:
+      - name: varlibc
+        mountPath: /var/lib/containers
+      securityContext:
+        allowPrivilegeEscalation: true
+        runAsUser: 0
+        privileged: true
+    - name: push-image-to-nexus
+      image: $(params.PUSH_REGISTRY_IMAGE)
+      env:
+      - name: REGISTRY_USER
+        valueFrom:
+          secretKeyRef:
+            name: $(params.REGISTRY_CREDENTIALS)
+            key: username
+      - name: REGISTRY_PASSWD
+        valueFrom:
+          secretKeyRef:
+            name: $(params.REGISTRY_CREDENTIALS)
+            key: passwd
+      script: |
+        buildah login -u $REGISTRY_USER -p $REGISTRY_PASSWD --tls-verify=false $(params.TARGET_REGISTRY)
+        buildah push --tls-verify=false $(params.TARGET_REGISTRY)/$(params.IMAGE_NAME):$(params.IMAGE_VERSION) docker://$(params.TARGET_REGISTRY)/$(params.IMAGE_NAME):$(params.IMAGE_VERSION)
+        buildah logout $(params.TARGET_REGISTRY)
+      volumeMounts:
+      - name: varlibc
+        mountPath: /var/lib/containers
+      securityContext:
+        allowPrivilegeEscalation: true
+        runAsUser: 0
+        privileged: true
+  volumes:
+  - name: varlibc
+    emptyDir: {}

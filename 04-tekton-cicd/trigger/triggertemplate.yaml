@@ -1,0 +1,40 @@
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: news-demo-dev-template
+spec:
+  params:
+    - name: gitrevision
+    - name: gitrepositoryurl
+    - name: createdat
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: cicd-example-nodejs-app-
+      spec:
+        pipelineRef:
+          name: cicd-example-nodejs-app
+        podTemplate:
+          securityContext:
+            fsGroup: 65532
+        workspaces: 
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: shared-data
+        - name: git-credentials
+          secret:
+            secretName: git-credentials
+        params:
+        - name: repo-url
+          value: git@github.com:ngocHung2000/cicd-example-nodejs.git
+        - name: REGISTRY_CREDENTIALS
+          value: "registry-credentials"
+        - name: TARGET_REGISTRY
+          value: "20.210.108.157:8082"
+        - name: IMAGE_NAME 
+          value: "nodejs-app"
+        - name: IMAGE_VERSION
+          value: "v1"
+

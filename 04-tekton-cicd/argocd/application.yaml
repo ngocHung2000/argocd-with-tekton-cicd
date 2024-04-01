@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: reddit-clone-application
+  namespace: argocd
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'  # Kubernetes API server URL
+    namespace: default
+  project: default
+  source:
+    repoURL: "git@github.com:ngocHung2000/nodejs-argocd-deployment-example.git"  # URL to your Git repository
+    targetRevision: master
+    path: ./
+  imagePullSecrets:
+  - name: my-registry-secret

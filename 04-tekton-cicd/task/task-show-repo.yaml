@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: show-repo
+spec:
+  description: Read and display README file.
+  workspaces:
+  - name: source
+  steps:
+  - name: read
+    image: alpine:latest
+    script: | 
+      #!/usr/bin/env sh
+      ls -lah $(workspaces.source.path)
+      cat $(workspaces.source.path)/README.md
+  - name: build-and-test-sources
+    image: docker.io/node:19-alpine3.15
+    workingDir: "$(workspaces.source.path)"
+    script: |
+      npm install

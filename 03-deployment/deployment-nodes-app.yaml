@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reddit-clone-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: reddit-clone-app
+  template:
+    metadata:
+      labels:
+        app: reddit-clone-app
+    spec:
+      containers:
+        - name: reddit-clone-app
+          image: ngochung1809/nodejs-app:v1
+          resources:
+            limits:
+              cpu: "1"
+            requests:
+              cpu: "500m"
+          ports:
+            - containerPort: 3000
