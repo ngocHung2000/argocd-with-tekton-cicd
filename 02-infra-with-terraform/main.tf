@@ -28,7 +28,7 @@ resource "aws_instance" "microk8s-server" {
 }
 
 resource "aws_security_group" "microk8s-sg" {
-  name        = "nexus-vm-sg"
+  name        = "microk8s-sg"
   description = "Allow inbound traffic"
 
   ingress {

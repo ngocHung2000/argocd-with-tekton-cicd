@@ -21,9 +21,9 @@ spec:
   - name: REGISTRY_CREDENTIALS
     value: "registry-credentials"
   - name: TARGET_REGISTRY
-    value: "20.210.108.157:8082"
+    value: "ngochung1809"
   - name: IMAGE_NAME 
-    value: "nodejs-app"
+    value: "reddit-clone-application"
   - name: IMAGE_VERSION
     value: "v1"
   - name: repo-url-deployment
