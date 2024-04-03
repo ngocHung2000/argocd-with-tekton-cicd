@@ -5,7 +5,7 @@ metadata:
   name: news-demo-dev-listener
   # namespace: default
 spec:
-  serviceAccountName: news-demo-dev-el
+  serviceAccountName: sa-tekton-example
   triggers:
     - name: news-demo-dev-listener
       interceptors:
