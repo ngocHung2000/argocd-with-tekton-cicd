@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: reddit-clone-app
-          image: docker.io/ngochung1809/reddit-clone-application:v1
+          image: docker.io/ngochung1809/reddit-clone-application:v5
           resources:
             limits:
               cpu: "1"
