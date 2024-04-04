@@ -9,13 +9,15 @@ spec:
   params:
     - name: IMAGE_NAME_DEPLOYMENT
     - name: IMAGE_VERSION
+    - name: PATH_DEPLOYMENT
   steps:
   - name: read
     image: alpine:latest
+    workingDir: "$(workspaces.source.path)/$(params.PATH_DEPLOYMENT)"
     script: | 
       #!/usr/bin/env sh
-      ls -lah $(workspaces.source.path)
-      cat $(workspaces.source.path)/deployment.yaml
+      ls -lah
+      cat deployment-nodes-app.yaml
       echo "============================================================="
-      sed -i 's/$(params.IMAGE_NAME_DEPLOYMENT).*/$(params.IMAGE_NAME_DEPLOYMENT):$(params.IMAGE_VERSION)/g' $(workspaces.source.path)/deployment.yaml
-      cat $(workspaces.source.path)/deployment.yaml
+      sed -i 's/$(params.IMAGE_NAME_DEPLOYMENT).*/$(params.IMAGE_NAME_DEPLOYMENT):$(params.IMAGE_VERSION)/g' deployment-nodes-app.yaml
+      cat deployment-nodes-app.yaml

@@ -15,21 +15,33 @@ spec:
   workspaces:
     - name: source
       description: "Workspace containing the code which needs to be scanned by SonarQube"
-    - name: sonar-credentials
-      description: |
-        A workspace containing a login or password for use within sonarqube.
-      optional: true
   params:
     - name: SONAR_SCANNER_IMAGE
       description: "The sonarqube scanner CLI image which will run the scan"
       default: "docker.io/sonarsource/sonar-scanner-cli:4.6@sha256:7a976330a8bad1beca6584c1c118e946e7a25fdc5b664d5c0a869a6577d81b4f"
+    - name: SONAR_PROJECT_KEY
+    - name: SONAR_PATH_SCAN
+      default: "."
+      type: string
+    - name: SONAR_HOST_URL
+      type: string
+    - name: SONAR_TOKEN_LOGIN
+      type: string
+    - name: PATH_APPLICATION
+      type: string
   steps:
     - name: sonar-scan
       image: $(params.SONAR_SCANNER_IMAGE)
-      workingDir: $(workspaces.source.path)
+      workingDir: $(workspaces.source.path)/$(params.PATH_APPLICATION)
+      env:
+      - name: SONAR_TOKEN_LOGIN
+        valueFrom:
+          secretKeyRef:
+            name: $(params.SONAR_TOKEN_LOGIN)
+            key: token
       script: |
         sonar-scanner \
-        -Dsonar.projectKey=example-cicd \
-        -Dsonar.sources=. \
-        -Dsonar.host.url=http://74.226.219.73:9000 \
-        -Dsonar.login=sqp_5c95208c24e959222f827f5df8bc394145727836
+        -Dsonar.projectKey=$(params.SONAR_PROJECT_KEY) \
+        -Dsonar.sources=$(params.SONAR_PATH_SCAN) \
+        -Dsonar.host.url=$(params.SONAR_HOST_URL) \
+        -Dsonar.login=${SONAR_TOKEN_LOGIN}

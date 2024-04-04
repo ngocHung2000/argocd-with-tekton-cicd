@@ -4,6 +4,10 @@ metadata:
   name: show-repo
 spec:
   description: Read and display README file.
+  params:
+    - name: PATH_APPLICATION
+      type: string
+      default: "01-reddit-clone-app-node"
   workspaces:
   - name: source
   steps:
@@ -15,6 +19,6 @@ spec:
       cat $(workspaces.source.path)/README.md
   - name: build-and-test-sources
     image: docker.io/node:19-alpine3.15
-    workingDir: "$(workspaces.source.path)"
+    workingDir: "$(workspaces.source.path)/$(params.PATH_APPLICATION)"
     script: |
       npm install

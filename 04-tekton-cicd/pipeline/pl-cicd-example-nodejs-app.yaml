@@ -9,6 +9,8 @@ spec:
   - name: repo-url
     type: string
     description: The git repo URL to clone from.
+  - name: PATH_APPLICATION
+    type: string
   - name: REGISTRY_CREDENTIALS
     type: string
   - name: TARGET_REGISTRY
@@ -19,7 +21,6 @@ spec:
     type: string
   - name: IMAGE_VERSION
     description: Image version
-    type: string
   - name: repo-url-deployment
     type: string
     description: The git repo URL to clone from.
@@ -32,22 +33,23 @@ spec:
     type: string
   - name: GIT_SCRIPT
     type: string
-  - name: ARGS
+  - name: PATH_DEPLOYMENT
     type: string
-  - name: SONAR_HOST_URL
+  - name: ARGS
     type: string
   - name: SONAR_PROJECT_KEY
     type: string
-  - name: PROJECT_VERSION
+  - name: SONAR_PATH_SCAN
     type: string
-  - name: SONAR_LOGIN_KEY
+  - name: SONAR_HOST_URL
     type: string
-  - name: SONAR_PASSWORD_KEY
+  - name: SONAR_TOKEN_LOGIN
     type: string
   workspaces:
   - name: shared-data
   - name: git-credentials
   tasks:
+  # Fetch all code
   - name: fetch-source
     taskRef:
       name: git-clone
@@ -59,6 +61,7 @@ spec:
     params:
     - name: url
       value: $(params.repo-url)
+  # Show file Repo
   - name: show-repo
     runAfter: ["fetch-source"]
     taskRef:
@@ -66,6 +69,10 @@ spec:
     workspaces:
     - name: source
       workspace: shared-data
+    params:
+      - name: PATH_APPLICATION
+        value: "$(params.PATH_APPLICATION)"
+  # Trivy Scanner
   - name: trivy-scanner
     runAfter: ["show-repo"]
     taskRef:
@@ -76,6 +83,9 @@ spec:
     params:
     - name: ARGS
       value: $(params.ARGS)
+    - name: PATH_APPLICATION
+      value: "$(params.PATH_APPLICATION)"
+  # Build and push
   - name: build-and-push-nodejs-app
     runAfter: ["trivy-scanner"]
     taskRef:
@@ -92,7 +102,6 @@ spec:
       value: $(params.IMAGE_NAME)
     - name: IMAGE_VERSION
       value: $(params.IMAGE_VERSION)
-
   - name: sonarqube-scanner
     runAfter: ["build-and-push-nodejs-app"]
     taskRef:
@@ -101,17 +110,17 @@ spec:
     - name: source
       workspace: shared-data
     params:
-    - name: SONAR_HOST_URL
-      value: $(params.SONAR_HOST_URL)
     - name: SONAR_PROJECT_KEY
       value: $(params.SONAR_PROJECT_KEY)
-    - name: PROJECT_VERSION
-      value: $(params.PROJECT_VERSION)
-    - name: SONAR_LOGIN_KEY
-      value: $(params.SONAR_LOGIN_KEY)
-    - name: SONAR_PASSWORD_KEY
-      value: $(params.SONAR_PASSWORD_KEY)
-
+    - name: SONAR_PATH_SCAN
+      value: $(params.SONAR_PATH_SCAN)
+    - name: SONAR_HOST_URL
+      value: $(params.SONAR_HOST_URL)
+    - name: SONAR_TOKEN_LOGIN
+      value: $(params.SONAR_TOKEN_LOGIN)
+    - name: PATH_APPLICATION
+      value: "$(params.PATH_APPLICATION)"
+  # Fetch source deployment
   - name: fetch-source-deployment
     taskRef:
       name: git-deployment
@@ -136,6 +145,8 @@ spec:
       value: $(params.IMAGE_NAME)
     - name: IMAGE_VERSION
       value: $(params.IMAGE_VERSION)
+    - name: PATH_DEPLOYMENT
+      value: $(params.PATH_DEPLOYMENT)
   - name: push-change-deploy
     runAfter: ["show-repo-deployment"]
     taskRef:
@@ -152,5 +163,3 @@ spec:
       value: $(params.GIT_USER_EMAIL)
     - name: GIT_SCRIPT
       value: $(params.GIT_SCRIPT)
-
-    

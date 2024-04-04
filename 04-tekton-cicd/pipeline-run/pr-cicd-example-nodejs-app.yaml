@@ -17,19 +17,21 @@ spec:
       secretName: git-credentials
   params:
   - name: repo-url
-    value: "git@github.com:ngocHung2000/cicd-example-nodejs.git"
+    value: "git@github.com:ngocHung2000/argocd-with-tekton-cicd.git"
+  - name: PATH_APPLICATION
+    value: "01-reddit-clone-app-node"
   - name: REGISTRY_CREDENTIALS
     value: "registry-credentials"
   - name: TARGET_REGISTRY
-    value: "ngochung1809"
-  - name: IMAGE_NAME 
+    value: "docker.io/ngochung1809"
+  - name: IMAGE_NAME
     value: "reddit-clone-application"
   - name: IMAGE_VERSION
-    value: "v1"
+    value: "v2"
   - name: repo-url-deployment
-    value: "git@github.com:ngocHung2000/nodejs-argocd-deployment-example.git"
+    value: "git@github.com:ngocHung2000/argocd-with-tekton-cicd.git"
   - name: IMAGE_NAME_DEPLOYMENT 
-    value: "ngochung1809/nodejs-app"
+    value: "docker.io/ngochung1809/reddit-clone-application"
   - name: GIT_USER_NAME
     value: "hungtn29"
   - name: GIT_USER_EMAIL
@@ -41,19 +43,19 @@ spec:
       git commit -m "update"
       ls -lah 
       git branch
-      git remote set-url origin git@github.com:ngocHung2000/nodejs-argocd-deployment-example.git
+      git remote set-url origin git@github.com:ngocHung2000/argocd-with-tekton-cicd.git
       git push origin HEAD:master
+  - name: PATH_DEPLOYMENT
+    value: "03-deployment"
   - name: ARGS
     value: |
       fs . > trivyfs.txt
-      cat trivyfs.txts
-  - name: SONAR_HOST_URL
-    value: "74.226.219.73:9000"
+      cat trivyfs.txt
   - name: SONAR_PROJECT_KEY
-    value: "example-cicd"
-  - name: PROJECT_VERSION
-    value: "v1"
-  - name: SONAR_LOGIN_KEY
-    value: "for-tekton"
-  - name: SONAR_PASSWORD_KEY
-    value: "TOKEN_PASSWD"
+    value: "tekton-cicd"
+  - name: SONAR_PATH_SCAN
+    value: "."
+  - name: SONAR_HOST_URL
+    value: "http://54.162.153.100:9000"
+  - name: SONAR_TOKEN_LOGIN
+    value: "sonarqube-token-login"

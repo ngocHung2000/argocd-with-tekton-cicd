@@ -39,13 +39,16 @@ spec:
       description: Image version
       default: "latest"
       type: string
+    - name: PATH_APPLICATION
+      default: "01-reddit-clone-app-node"
+      type: string
   workspaces:
     - name: source
       description: Holds the context and Dockerfile
   steps:
     - name: build-image
       image: $(params.BUILDER_IMAGE)
-      workingDir: "$(workspaces.source.path)"
+      workingDir: "$(workspaces.source.path)/$(params.PATH_APPLICATION)"
       command: ['buildah', 'bud', '--tls-verify=false', '--layers', '-f', 'Dockerfile', '-t', '$(params.TARGET_REGISTRY)/$(params.IMAGE_NAME):$(params.IMAGE_VERSION)', '.']
       volumeMounts:
       - name: varlibc
