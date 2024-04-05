@@ -1,4 +1,4 @@
-# Step by step guide Deploying CICD with Tekton Pipeline
+# Step-by-step guide to deploying CICD with Tekton Pipeline
 
 I. Architecture CI/CD
 
