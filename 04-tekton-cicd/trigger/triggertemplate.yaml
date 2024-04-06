@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
-  name: news-demo-dev-template
+  name: trigger-template-tekton-cicd
 spec:
   params:
     - name: gitrevision
@@ -22,19 +22,52 @@ spec:
         workspaces: 
         - name: shared-data
           persistentVolumeClaim:
-            claimName: shared-data
+            claimName: pvc-application
         - name: git-credentials
           secret:
             secretName: git-credentials
         params:
         - name: repo-url
-          value: git@github.com:ngocHung2000/cicd-example-nodejs.git
+          value: "git@github.com:ngocHung2000/argocd-with-tekton-cicd.git"
+        - name: PATH_APPLICATION
+          value: "01-reddit-clone-app-node"
         - name: REGISTRY_CREDENTIALS
           value: "registry-credentials"
         - name: TARGET_REGISTRY
-          value: "20.210.108.157:8082"
-        - name: IMAGE_NAME 
-          value: "nodejs-app"
+          value: "docker.io/ngochung1809"
+        - name: IMAGE_NAME
+          value: "reddit-clone-application"
         - name: IMAGE_VERSION
-          value: "v1"
+          value: $(tt.params.gitrevision)
+        - name: repo-url-deployment
+          value: "git@github.com:ngocHung2000/argocd-with-tekton-cicd.git"
+        - name: IMAGE_NAME_DEPLOYMENT 
+          value: "docker.io/ngochung1809/reddit-clone-application"
+        - name: GIT_USER_NAME
+          value: "hungtn29"
+        - name: GIT_USER_EMAIL
+          value: "tongochung1809@gmail.com"
+        - name: GIT_SCRIPT
+          value: |
+            # Push code to git
+            git add .
+            git commit -m "update"
+            ls -lah 
+            git branch
+            git remote set-url origin git@github.com:ngocHung2000/argocd-with-tekton-cicd.git
+            git push origin HEAD:master
+        - name: PATH_DEPLOYMENT
+          value: "03-deployment"
+        - name: ARGS
+          value: |
+            fs . > trivyfs.txt
+            cat trivyfs.txt
+        - name: SONAR_PROJECT_KEY
+          value: "tekton-cicd"
+        - name: SONAR_PATH_SCAN
+          value: "."
+        - name: SONAR_HOST_URL
+          value: "http://54.162.153.100:9000"
+        - name: SONAR_TOKEN_LOGIN
+          value: "sonarqube-token-login"
 

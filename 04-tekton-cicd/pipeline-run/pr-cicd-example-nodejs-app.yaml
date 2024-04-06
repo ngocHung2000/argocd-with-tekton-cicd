@@ -27,7 +27,7 @@ spec:
   - name: IMAGE_NAME
     value: "reddit-clone-application"
   - name: IMAGE_VERSION
-    value: "v2"
+    value: "$(date +'%Y%m%d-%H%M%S')"
   - name: repo-url-deployment
     value: "git@github.com:ngocHung2000/argocd-with-tekton-cicd.git"
   - name: IMAGE_NAME_DEPLOYMENT 

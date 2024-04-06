@@ -1,13 +1,11 @@
----
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: news-demo-dev-listener
-  # namespace: default
+  name: listener-tekton-cicd
 spec:
   serviceAccountName: sa-tekton-example
   triggers:
-    - name: news-demo-dev-listener
+    - name: listener-tekton-cicd
       interceptors:
         - ref:
             name: "github"
@@ -15,6 +13,6 @@ spec:
             - name: "eventTypes"
               value: ["push"]
       bindings:
-        - ref: news-demo-dev-binding
+        - ref: trigger-binding-tekton-cicd
       template:
-        ref: news-demo-dev-template
+        ref: trigger-template-tekton-cicd

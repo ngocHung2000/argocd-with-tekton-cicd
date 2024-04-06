@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
-  name: news-demo-dev-binding
+  name: trigger-binding-tekton-cicd
 spec:
   params:
     - name: gitrevision
