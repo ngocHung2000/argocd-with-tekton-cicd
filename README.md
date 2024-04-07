@@ -154,3 +154,32 @@ argo sync
 ![alt text](images/argocd_syc.png)
 access my app
 ![alt text](images/access_my_app.png)
+prometheus_deploy
+![alt text](images/prometheus_deploy.png)
+![alt text](images/prometheus_show.png)
+![alt text](images/prometheus_nodePort.png)
+deploy grafana with helm
+```
+kubectl patch svc -n prometheus stable-kube-prometheus-sta-prometheus -p '{"spec": {"type": "NodePort"}}'
+kubectl patch svc -n prometheus stable-grafana -p '{"spec": {"type": "NodePort"}}'
+```
+![alt text](images/nodePort_grafana.png)
+grafana ui
+```
+kubectl get secret -n prometheus stable-grafana -o jsonpath="{.data.admin-password}" | base64 --decode; echo
+```
+![alt text](images/grafana.png)
+Import Dashboard 15760
+![alt text](<images/import Kubernetes.png>)
+![alt text](images/k8s_dash.png)
+Import 
+![alt text](image.png)
+
+![alt text](images/mem.png)
+![alt text](images/dash_mem.png)
+![alt text](images/dash_mem_result.png)
+
+Deploy ELK with Helm chart
+```
+helm repo add elastic https://helm.elastic.co
+```

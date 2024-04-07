@@ -83,9 +83,10 @@ microk8s kubectl patch svc -n kube-system kubernetes-dashboard -p '{"spec": {"ty
 # kubectl get po -n prometheus
 
 # # Change type svc is LoadBalancer and port 8080 -> 9090
-# kubectl edit svc stable-kube-prometheus-sta-prometheus -n prometheus
+# kubectl patch svc -n prometheus stable-kube-prometheus-sta-prometheus -p '{"spec": {"type": "NodePort"}}'
 # # Change type svc is LoadBalancer
 # kubectl edit svc stable-grafana -n prometheus
+# kubectl patch svc -n prometheus stable-grafana -p '{"spec": {"type": "NodePort"}}'
 # # Show passwd grafana with user is admin
 # kubectl get secret -n prometheus stable-grafana -o jsonpath="{.data.admin-password}" | base64 --decode; echo
 
