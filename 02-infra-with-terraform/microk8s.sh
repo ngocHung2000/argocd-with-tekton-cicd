@@ -60,9 +60,9 @@ echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+sudo apt-get update -y
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 chmod 777 /var/run/docker.sock
 
@@ -72,6 +72,8 @@ docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
 microk8s kubectl patch svc -n argocd argocd-server -p '{"spec": {"type": "NodePort"}}'
 microk8s kubectl patch svc -n tekton-pipelines tekton-dashboard -p '{"spec": {"type": "NodePort"}}'
 microk8s kubectl patch svc -n kube-system kubernetes-dashboard -p '{"spec": {"type": "NodePort"}}'
+
+
 # helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
 # kubectl create ns prometheus
