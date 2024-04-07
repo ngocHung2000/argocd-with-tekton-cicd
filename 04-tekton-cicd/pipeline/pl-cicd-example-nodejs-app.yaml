@@ -98,7 +98,7 @@ spec:
       value: $(params.REGISTRY_CREDENTIALS)
     - name: TARGET_REGISTRY
       value: $(params.TARGET_REGISTRY)
-    - name: IMAGE_NAME 
+    - name: IMAGE_NAME
       value: $(params.IMAGE_NAME)
     - name: IMAGE_VERSION
       value: $(params.IMAGE_VERSION)
