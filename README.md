@@ -270,7 +270,7 @@ k get task -A
 
 3. Apply Pipeline
 
-``
+```
 
 k apply -f pipeline
 
